@@ -6,6 +6,7 @@ import ProductDetail from "./components/ProductDetail/ProductDetail";
 import Cart from "./components/Cart/Cart";
 import SildeShow from "./components/SileShow/SildeShow";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 function App() {
     return (
         <Router>
