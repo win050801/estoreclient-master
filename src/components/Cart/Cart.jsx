@@ -1,9 +1,71 @@
-import React from "react";
+import { data } from "jquery";
+import React,{useContext, useEffect, useState} from "react";
 import "./bootstrap.css";
 import "./responsive.css";
 import "./ui.css";
 
+import { AppContext } from "../../context/AppProvider";
+import axios from "axios";
 export default function Cart() {
+    const { setOpenThanhToan } =
+    useContext(AppContext);
+    const [sum,setSum] = useState(0)
+    const [orderDetals,setOrderDetals]=useState([])
+    data = [
+        {
+            name: "Nước hoa Gucci 105ml",
+            size: "105 ml",
+            quantity: 1,
+            price: 1000,
+            id:7
+            
+        },
+        {
+            name: "Nước hoa Chanel 200ml",
+            size: "200 ml",
+            quantity: 1,
+            price: 2000,
+            id:7
+        },
+        {
+            name: "Nước hoa Hermet 105ml",
+            size: "105 ml",
+            quantity: 2,
+            price: 3000,
+            id:11
+        }
+    ]
+    useEffect(()=>{
+        var sumTam =0
+        var orderTam =[]
+        data.forEach(element => {
+            const su = element.price
+            orderTam.push({
+                unitPrice:element.price,
+                quantity:element.quantity,
+                discount:0,
+                productId:element.id
+            })
+            sumTam+=su
+        });
+        setSum(sumTam)
+        setOrderDetals(orderTam)
+        
+    },[])
+    const hadleThanhToan = async()=>{
+        const response = await axios.post(
+            "http://localhost:5000/saveOrder",
+            {
+                orderDate:null,
+                address:"Thong nhat",
+                amount:1000,
+                description:"Test",
+                customerId:3,
+                orderDetails:orderDetals
+                
+            }
+        );
+    }
     return (
         <div className="App">
             <section class="section-pagetop bg">
@@ -35,193 +97,78 @@ export default function Cart() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>
-                                                <figure class="itemside">
-                                                    <div class="aside">
-                                                        <img
-                                                            src="assets/images/items/1.jpg"
-                                                            class="img-sm"
-                                                        />
-                                                    </div>
-                                                    <figcaption class="info">
+                                        {data.map((product, index) => {
+                                            return (
+                                                <tr>
+                                                    <td>
+                                                        <figure class="itemside">
+                                                            <div class="aside">
+                                                                <img
+                                                                    src="assets/images/items/1.jpg"
+                                                                    class="img-sm"
+                                                                />
+                                                            </div>
+                                                            <figcaption class="info">
+                                                                <a
+                                                                    href="#"
+                                                                    class="title text-dark"
+                                                                >
+                                                                    {product.name}
+                                                                </a>
+                                                                <p class="text-muted small">
+                                                                    Size: {product.size},  <br /> Brand:
+                                                                    Gucci
+                                                                </p>
+                                                            </figcaption>
+                                                        </figure>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control">
+                                                            <option>1</option>
+                                                            <option>2</option>
+                                                            <option>3</option>
+                                                            <option>4</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <div class="price-wrap">
+                                                            <var class="price">
+                                                                ${product.price}
+                                                            </var>
+                                                            <small class="text-muted">
+                                                                ${product.price}
+                                                            </small>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-right">
                                                         <a
-                                                            href="#"
-                                                            class="title text-dark"
+                                                            data-original-title="Save to Wishlist"
+                                                            title=""
+                                                            href=""
+                                                            class="btn btn-light mr-2"
+                                                            data-toggle="tooltip"
                                                         >
-                                                            Some name of item
-                                                            goes here nice
+                                                            <i class="fa fa-heart"></i>
                                                         </a>
-                                                        <p class="text-muted small">
-                                                            Size: XL, Color:
-                                                            blue, <br /> Brand:
-                                                            Gucci
-                                                        </p>
-                                                    </figcaption>
-                                                </figure>
-                                            </td>
-                                            <td>
-                                                <select class="form-control">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <div class="price-wrap">
-                                                    <var class="price">
-                                                        $1156.00
-                                                    </var>
-                                                    <small class="text-muted">
-                                                        $315.20 each
-                                                    </small>
-                                                </div>
-                                            </td>
-                                            <td class="text-right">
-                                                <a
-                                                    data-original-title="Save to Wishlist"
-                                                    title=""
-                                                    href=""
-                                                    class="btn btn-light mr-2"
-                                                    data-toggle="tooltip"
-                                                >
-                                                    <i class="fa fa-heart"></i>
-                                                </a>
-                                                <a
-                                                    href=""
-                                                    class="btn btn-light"
-                                                >
-                                                    Remove
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <figure class="itemside">
-                                                    <div class="aside">
-                                                        <img
-                                                            src="assets/images/items/2.jpg"
-                                                            class="img-sm"
-                                                        />
-                                                    </div>
-                                                    <figcaption class="info">
                                                         <a
-                                                            href="#"
-                                                            class="title text-dark"
+                                                            href=""
+                                                            class="btn btn-light"
                                                         >
-                                                            Product name goes
-                                                            here nice
+                                                            Remove
                                                         </a>
-                                                        <p class="text-muted small">
-                                                            Size: XL, Color:
-                                                            blue, <br /> Brand:
-                                                            Gucci
-                                                        </p>
-                                                    </figcaption>
-                                                </figure>
-                                            </td>
-                                            <td>
-                                                <select class="form-control">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <div class="price-wrap">
-                                                    <var class="price">
-                                                        $149.97
-                                                    </var>
-                                                    <small class="text-muted">
-                                                        $75.00 each
-                                                    </small>
-                                                </div>
-                                            </td>
-                                            <td class="text-right">
-                                                <a
-                                                    data-original-title="Save to Wishlist"
-                                                    title=""
-                                                    href=""
-                                                    class="btn btn-light mr-2"
-                                                    data-toggle="tooltip"
-                                                >
-                                                    <i class="fa fa-heart"></i>
-                                                </a>
-                                                <a
-                                                    href=""
-                                                    class="btn btn-light btn-round"
-                                                >
-                                                    Remove
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <figure class="itemside">
-                                                    <div class="aside">
-                                                        <img
-                                                            src="assets/images/items/3.jpg"
-                                                            class="img-sm"
-                                                        />
-                                                    </div>
-                                                    <figcaption class="info">
-                                                        <a
-                                                            href="#"
-                                                            class="title text-dark"
-                                                        >
-                                                            Another name of some
-                                                            product goes just
-                                                            here
-                                                        </a>
-                                                        <p class="small text-muted">
-                                                            Size: XL, Color:
-                                                            blue, Brand: Tissot
-                                                        </p>
-                                                    </figcaption>
-                                                </figure>
-                                            </td>
-                                            <td>
-                                                <select class="form-control">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <div class="price-wrap">
-                                                    <var class="price">
-                                                        $98.00
-                                                    </var>
-                                                    <small class="text-muted">
-                                                        $578.00 each
-                                                    </small>
-                                                </div>
-                                            </td>
-                                            <td class="text-right">
-                                                <a
-                                                    data-original-title="Save to Wishlist"
-                                                    title=""
-                                                    href=""
-                                                    class="btn btn-light mr-2"
-                                                    data-toggle="tooltip"
-                                                >
-                                                    <i class="fa fa-heart"></i>
-                                                </a>
-                                                <a
-                                                    href=""
-                                                    class="btn btn-light btn-round"
-                                                >
-                                                    Remove
-                                                </a>
-                                            </td>
-                                        </tr>
+                                                    </td>
+                                                </tr>
+                                            )
+
+                                        })}
+
+
                                     </tbody>
                                 </table>
 
                                 <div class="card-body border-top">
-                                    <a
+                                    <a  
+                                        onClick={()=>{setOpenThanhToan(true)}}
                                         href="#"
                                         class="btn btn-primary float-md-right"
                                     >
@@ -266,28 +213,30 @@ export default function Cart() {
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-body">
+                                <div style={{display:"flex",flexDirection:"column"}} class="card-body">
                                     <dl class="dlist-align">
                                         <dt>Total price:</dt>
-                                        <dd class="text-right">USD 568</dd>
+                                        <dd class="text-right">${sum}</dd>
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Discount:</dt>
-                                        <dd class="text-right">USD 658</dd>
+                                        <dd class="text-right">0</dd>
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Total:</dt>
                                         <dd class="text-right  h5">
-                                            <strong>$1,650</strong>
+                                            <strong>${sum}</strong>
                                         </dd>
                                     </dl>
                                     <hr />
-                                    <p class="text-center mb-3">
-                                        <img
-                                            src="assets/images/misc/payments.png"
-                                            height="26"
-                                        />
-                                    </p>
+                                    <a  
+                                        onClick={()=>{hadleThanhToan()}}
+                                        href="#"
+                                        class="btn btn-primary "
+                                    >
+                                        BUY
+                                       
+                                    </a>
                                 </div>
                             </div>
                         </aside>

@@ -2,7 +2,7 @@
 import "./Login.css"
 import { Button, Col, Input, Row, Tabs } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { LockOutlined, MobileOutlined } from "@ant-design/icons";
+import { LockOutlined, MobileOutlined, MailOutlined } from "@ant-design/icons";
 import ReactPhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import React, { useState, useEffect, useContext } from "react";
@@ -18,11 +18,13 @@ function Login() {
     const [vlpass, setvlpass] = useState("")
     const [password, setpass] = useState("")
     const [checkOtp, setCheckOtp] = useState(true);
+    const [email, setEmail] = useState()
+    const [login, setLogin] = useState(true)
     const handleLogin = async () => {
         // if (validateForm()) {
         try {
             const { data } = await axios.post("http://localhost:5000/login/login", {
-                phoneNumber: phonenumber,
+                email: email,
                 password,
             });
 
@@ -34,6 +36,10 @@ function Login() {
             //    // console.log(process.env.REACT_APP_LOCALHOST_KEY);
 
             setUser(data)
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data)
+            );
             navigate("/");
 
             //  }
@@ -54,29 +60,54 @@ function Login() {
                 <Col className="login-body" span={24}>
                     <div style={{ display: checkOtp ? "block" : "none" }}>
 
-                        <form className="login-form">
+                        {login === true ? (<form className="login-form">
                             <br></br>
                             <span className="login-header-logo">Login</span>
-                            <div className="login-phone-input">
-                                <MobileOutlined
-                                    style={{
-                                        fontSize: "17px",
-                                        padding: "0 11px",
-                                    }}
+                            <div className="login-password-input">
+                                <Input
+                                    size="large"
+                                    bordered={false}
+                                    placeholder="Email"
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    prefix={<MailOutlined />}
                                 />
-                                <ReactPhoneInput
-                                    className="phone-input"
-                                    country={"vn"}
-                                    placeholder="Số điện thoại"
-                                    autoFormat
-                                    onChange={(e) => setphone(e)}
-                                    disableCountryCode
-                                    inputStyle={{ border: "none" }}
-                                    buttonStyle={{
-                                        border: "none",
-                                        backgroundColor: "white",
-                                    }}
-                                ></ReactPhoneInput>
+                            </div>
+                            <span style={{ color: "red", paddingLeft: 50, fontSize: 15 }} >{vlphone}</span>
+                            <br></br>
+                            <div className="login-password-input">
+                                <Input.Password
+                                    size="large"
+                                    bordered={false}
+                                    placeholder="Mật khẩu"
+                                    onChange={(e) => setpass(e.target.value)}
+                                    prefix={<LockOutlined />}
+                                />
+                            </div>
+                            <span style={{ color: "red", paddingLeft: 50, fontSize: 15 }} >{vlpass}</span>
+                            <Button className="login-btn-login" onClick={() => handleLogin()} >
+                                Đăng nhập
+                            </Button>
+
+
+                            <Link className="login-link" to="/repassword">
+                                Quên mật khẩu?
+                            </Link>
+                            <span style={{ color: "red", textAlign: "center", fontSize: 16 }}>{er}</span>
+                            <br></br>
+                            <span style={{ textAlign: "center" }}>
+                                Bạn chưa có tài khoản? <Link to="#" onClick={()=>{setLogin(false)}}>Đăng ký ngay!</Link>
+                            </span>
+                        </form>) : (<form className="login-form">
+                            <br></br>
+                            <span className="login-header-logo">Register</span>
+                            <div className="login-password-input">
+                                <Input
+                                    size="large"
+                                    bordered={false}
+                                    placeholder="Email"
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    prefix={<MailOutlined />}
+                                />
                             </div>
                             <span style={{ color: "red", paddingLeft: 50, fontSize: 15 }} >{vlphone}</span>
                             <br></br>
@@ -103,7 +134,7 @@ function Login() {
                             <span style={{ textAlign: "center" }}>
                                 Bạn chưa có tài khoản? <Link to="/register">Đăng ký ngay!</Link>
                             </span>
-                        </form>
+                        </form>)}
 
 
                     </div>
