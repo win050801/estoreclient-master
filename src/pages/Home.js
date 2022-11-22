@@ -21,17 +21,26 @@ import $ from "jquery";
 
 function Home() {
     const [data, setData] = useState();
-    const handleAddCart = async (productId) => {
-        try {
-            const response = await axios.get(
-                `http://localhost:5000/addToCart/${productId}`
-            );
-            setData(response.data);
-            console.log(response);
-        } catch (error) {
-            console.log(error);
+    const [cartProduct, setCartProduct] = useState([]);
+
+    useEffect(() => {
+        async function fetchData() {
+            // You can await here
+            //   console.log("test");
+            try {
+                const response = await axios.get(
+                    "http://localhost:5000/addToCart/1112"
+                );
+
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+            }
+
+            // ...
         }
-    };
+        fetchData();
+    }, []);
     useEffect(() => {
         async function fetchData() {
             // You can await here
@@ -79,45 +88,42 @@ function Home() {
                     <div
                         class="red_button add_to_cart_button btn-add-cart"
                         onClick={async () => {
-                            var productId = product.productId;
-                            try {
-                                const response = await axios.post(
-                                    `http://localhost:5000/createCookie`
+                            if (localStorage.getItem("cart")) {
+                                const cart = JSON.parse(
+                                    localStorage.getItem("cart")
                                 );
-                                console.log(response);
-                            } catch (error) {
-                                console.log(error);
+
+                                if (
+                                    JSON.stringify(cart).indexOf(
+                                        JSON.stringify(product)
+                                    ) === -1
+                                ) {
+                                    cart.push(product);
+                                    setCartProduct(cart);
+                                    localStorage.setItem(
+                                        "cart",
+                                        JSON.stringify(cart)
+                                    );
+                                } else {
+                                    console.log("da co sp");
+                                }
+                            } else {
+                                const cart = [];
+                                console.log(cart);
+                                if (cart.indexOf(product) === -1) {
+                                    cart.push(product);
+                                    setCartProduct(cart);
+                                    localStorage.setItem(
+                                        "cart",
+                                        JSON.stringify(cart)
+                                    );
+                                } else {
+                                    console.log("da co sp");
+                                }
                             }
                         }}
-                        // onClick={handleAddCart(product.productId)}
-                        // onClick={() => {
-                        // handleAddCart(productId);
-                        // $(document).ready(function () {
-                        //     $(".btn-add-cart").click(function () {
-                        //         var productId = product.productId;
-                        //         try {
-                        //             const response = axios.get(
-                        //                 `http://localhost:5000/addToCart/${productId}`
-                        //             );
-                        //         } catch (error) {
-                        //             console.log(error);
-                        //         }
-                        //         // $.ajax({
-                        //         //     // url: `http://localhost:5000/addToCart/${productId}`,
-                        //         //     url: "http://localhost:5000/addToCart/1112",
-                        //         //     success: function (response) {
-                        //         //         if (response) {
-                        //         //             console.log("Thêm thành công");
-                        //         //         } else {
-                        //         //             console.log("Đã có sẵn");
-                        //         //         }
-                        //         //     },
-                        //         // });
-                        //     });
-                        // });
-                        // }}
                     >
-                        <a href="#">add to cart</a>
+                        <a>add to cart</a>
                     </div>
                 </div>
             </div>
