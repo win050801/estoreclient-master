@@ -1,96 +1,82 @@
-
 import { data } from "jquery";
-import React,{useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import "./bootstrap.css";
 import "./responsive.css";
 import "./ui.css";
 import { AppContext } from "../../context/AppProvider";
 
-
 import axios from "axios";
 export default function Cart() {
-
-    const { setOpenThanhToan } =
-    useContext(AppContext);
-    const [sum,setSum] = useState(0)
-    const [orderDetals,setOrderDetals]=useState([])
+    const { setOpenThanhToan } = useContext(AppContext);
+    const [sum, setSum] = useState(0);
+    const [orderDetals, setOrderDetals] = useState([]);
     data = [
         {
             name: "Nước hoa Gucci 105ml",
             size: "105 ml",
             quantity: 1,
             price: 1000,
-            id:7
-            
+            id: 7,
         },
         {
             name: "Nước hoa Chanel 200ml",
             size: "200 ml",
             quantity: 1,
             price: 2000,
-            id:7
+            id: 7,
         },
         {
             name: "Nước hoa Hermet 105ml",
             size: "105 ml",
             quantity: 2,
             price: 3000,
-            id:11
-        }
-    ]
-    useEffect(()=>{
-        var sumTam =0
-        var orderTam =[]
-        data.forEach(element => {
-            const su = element.price
+            id: 11,
+        },
+    ];
+    useEffect(() => {
+        var sumTam = 0;
+        var orderTam = [];
+        data.forEach((element) => {
+            const su = element.price;
             orderTam.push({
-                unitPrice:element.price,
-                quantity:element.quantity,
-                discount:0,
-                productId:element.id
-            })
-            sumTam+=su
+                unitPrice: element.price,
+                quantity: element.quantity,
+                discount: 0,
+                productId: element.id,
+            });
+            sumTam += su;
         });
-        setSum(sumTam)
-        setOrderDetals(orderTam)
-        
-    },[])
-    const hadleThanhToan = async()=>{
-        const response = await axios.post(
-            "http://localhost:5000/saveOrder",
-            {
-                orderDate:null,
-                address:"Thong nhat",
-                amount:1000,
-                description:"Test",
-                customerId:3,
-                orderDetails:orderDetals
-                
-            }
-        );
-    }
+        setSum(sumTam);
+        setOrderDetals(orderTam);
+    }, []);
+    const hadleThanhToan = async () => {
+        const response = await axios.post("http://localhost:5000/saveOrder", {
+            orderDate: null,
+            address: "Thong nhat",
+            amount: 1000,
+            description: "Test",
+            customerId: 3,
+            orderDetails: orderDetals,
+        });
+    };
 
     // const product = JSON.parse(localStorage.getItem("cart"));
     const { product } = useContext(AppContext);
     const [productCart, setProductCart] = useState([]);
     var [count, setCount] = useState(1);
     var [total, setTotal] = useState(0);
-
-   
-
+    var [tongTien, setTongTien] = useState(0);
     for (let i = 0; i < product.length; i++) {
-        // sum += parseInt(product[i].unitPrice);
-        // const countP = document.getElementById(product[i].productId + "fruit").value;
-        // sum += parseInt(product[i].unitPrice) * countP;
-        // console.log(countP);
+        tongTien += parseInt(product[i].unitPrice) * product[i].quantilyP;
+        console.log(tongTien);
     }
-    // useEffect(() => {
-    //     setTotal(sum);
-    // }, []);
-
+    const handleQuantily = (e) => {
+        const countP = document.getElementById(e.productId + "fruit").value;
+        e.quantilyP = parseInt(countP);
+        setProductCart(JSON.parse(localStorage.getItem("cart")));
+    };
     useEffect(() => {
-        console.log(product);
         setProductCart(product);
     }, [productCart]);
 
@@ -125,22 +111,16 @@ export default function Cart() {
                                         </tr>
                                     </thead>
                                     <tbody>
-
-
-
                                         {productCart.map((e, i) => {
-
                                             return (
                                                 <tr>
                                                     <td>
                                                         <figure class="itemside">
                                                             <div class="aside">
                                                                 <img
-
                                                                     src={
                                                                         e.image
                                                                     }
-
                                                                     class="img-sm"
                                                                 />
                                                             </div>
@@ -156,16 +136,11 @@ export default function Cart() {
                                                                     Color: blue,
                                                                     Brand:
                                                                     Tissot
-
                                                                 </p>
                                                             </figcaption>
                                                         </figure>
                                                     </td>
                                                     <td>
-
-
-
-
                                                         <select
                                                             id={
                                                                 e.productId +
@@ -173,27 +148,8 @@ export default function Cart() {
                                                             }
                                                             class="form-control"
                                                             onChange={() => {
-                                                                console.log(
-                                                                    e.productId
-                                                                );
-                                                                const countP =
-                                                                    document.getElementById(
-                                                                        e.productId +
-                                                                            "fruit"
-                                                                    ).value;
-                                                                const totalProduct =
-                                                                    countP *
-                                                                    e.unitPrice;
-                                                               
-                                                                console.log(
-                                                                    countP
-                                                                );
-                                                                setTotal(
-                                                                    total +
-                                                                        parseInt(
-                                                                            countP *
-                                                                                e.unitPrice
-                                                                        )
+                                                                handleQuantily(
+                                                                    e
                                                                 );
                                                             }}
                                                         >
@@ -217,7 +173,8 @@ export default function Cart() {
                                                                 {e.unitPrice}
                                                             </var>
                                                             <small class="text-muted">
-                                                                $578.00 each
+                                                                ${e.unitPrice}{" "}
+                                                                each
                                                             </small>
                                                         </div>
                                                     </td>
@@ -247,13 +204,13 @@ export default function Cart() {
                                                                         product
                                                                     )
                                                                 );
-                                                                // console.log(
-                                                                //     typeof
-                                                                //     product
-                                                                // );
-                                                                // console.log(JSON.parse(localStorage.getItem("cart")));
+
                                                                 setProductCart(
-                                                                   JSON.parse(localStorage.getItem("cart"))
+                                                                    JSON.parse(
+                                                                        localStorage.getItem(
+                                                                            "cart"
+                                                                        )
+                                                                    )
                                                                 );
                                                             }}
                                                         >
@@ -263,13 +220,14 @@ export default function Cart() {
                                                 </tr>
                                             );
                                         })}
-
                                     </tbody>
                                 </table>
 
                                 <div class="card-body border-top">
-                                    <a  
-                                        onClick={()=>{setOpenThanhToan(true)}}
+                                    <a
+                                        onClick={() => {
+                                            setOpenThanhToan(true);
+                                        }}
                                         href="#"
                                         class="btn btn-primary float-md-right"
                                     >
@@ -314,34 +272,38 @@ export default function Cart() {
                                 </div>
                             </div>
                             <div class="card">
-                                <div style={{display:"flex",flexDirection:"column"}} class="card-body">
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                    }}
+                                    class="card-body"
+                                >
                                     <dl class="dlist-align">
                                         <dt>Total price:</dt>
 
-                                        <dd class="text-right">${sum}</dd>
+                                        <dd class="text-right">${tongTien}</dd>
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Discount:</dt>
                                         <dd class="text-right">0</dd>
-
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Total:</dt>
                                         <dd class="text-right  h5">
-
-                                            <strong>${sum}</strong>
+                                            <strong>${tongTien}</strong>
                                         </dd>
                                     </dl>
                                     <hr />
-                                    <a  
-                                        onClick={()=>{hadleThanhToan()}}
+                                    <a
+                                        onClick={() => {
+                                            hadleThanhToan();
+                                        }}
                                         href="#"
                                         class="btn btn-primary "
                                     >
                                         BUY
-                                       
                                     </a>
-
                                 </div>
                             </div>
                         </aside>
