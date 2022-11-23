@@ -11,6 +11,8 @@ import FlatList from "flatlist-react";
 import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
 
+import { UserOutlined } from "@ant-design/icons";
+
 import "../styles/bootstrap4/bootstrap.min.css";
 import "../plugins/OwlCarousel2-2.2.1/owl.carousel.css";
 import "../plugins/OwlCarousel2-2.2.1/owl.theme.default.css";
@@ -19,9 +21,22 @@ import "../styles/main_styles.css";
 import "../styles/responsive.css";
 import { AppContext } from "../context/AppProvider";
 import $ from "jquery";
-
+import { useNavigate } from "react-router-dom";
+import ProductDetail from "../components/ProductDetail/ProductDetail";
+import { AppContext } from "../context/AppProvider";
+import Order from "../components/Cart/Order";
 function Home() {
+    const { setisAddUserModalOpen } =
+        useContext(AppContext);
+    const naigate = useNavigate()
+    const [clickProduct, setClickProduct] = useState(undefined)
+    const[openHoaDon,setOpenHoaDon] =useState(undefined)
     const [data, setData] = useState();
+
+    const [customer, setCustomer] = useState(undefined)
+
+   
+
     const [cartProduct, setCartProduct] = useState([]);
     // const product = JSON.parse(localStorage.getItem("cart"));
     const { product } = useContext(AppContext);
@@ -31,24 +46,7 @@ function Home() {
         console.log(count);
     }, []);
 
-    useEffect(() => {
-        async function fetchData() {
-            // You can await here
-            //   console.log("test");
-            try {
-                const response = await axios.get(
-                    "http://localhost:5000/addToCart/1112"
-                );
-
-                console.log(response);
-            } catch (error) {
-                console.log(error);
-            }
-
-            // ...
-        }
-        fetchData();
-    }, []);
+   
     useEffect(() => {
         async function fetchData() {
             // You can await here
@@ -58,7 +56,12 @@ function Home() {
                     "http://localhost:5000/getAllProduct"
                 );
                 setData(response.data);
-                console.log(response);
+                if (localStorage.getItem("user")) {
+                    setCustomer(JSON.parse(localStorage.getItem("user")))
+                }
+
+
+                // console.log(response);
             } catch (error) {
                 console.log(error);
             }
@@ -71,6 +74,7 @@ function Home() {
     const renderPerson = (product, idx) => {
         return (
             <div
+                onClick={() => { setClickProduct(product) }}
                 class="product-grid"
                 data-isotope='{ "itemSelector": ".product-item", "layoutMode": "fitRows" }'
             >
@@ -134,6 +138,7 @@ function Home() {
                                 }
                             }
                         }}
+
                     >
                         <a>add to cart</a>
                     </div>
@@ -155,9 +160,11 @@ function Home() {
                                 </div>
                                 <div class="col-md-6 text-right">
                                     <div class="top_nav_right">
-                                        <ul class="top_nav_menu">
+                                        {customer === undefined ? (<ul class="top_nav_menu">
                                             <li class="account">
+
                                                 <a href="#">
+
                                                     My Account
                                                     <i class="fa fa-angle-down"></i>
                                                 </a>
@@ -182,7 +189,45 @@ function Home() {
                                                     </li>
                                                 </ul>
                                             </li>
-                                        </ul>
+                                        </ul>) : (<ul class="top_nav_menu">
+                                            <li class="account">
+
+                                                <a href="#">
+
+                                                    {customer.fullName}
+                                                    <i class="fa fa-angle-down"></i>
+                                                </a>
+                                                <ul class="account_selection">
+                                                    <li onClick={() => { setisAddUserModalOpen(true) }} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                                        <a href="#">
+                                                            <i
+                                                                class="fa fa-user"
+                                                                aria-hidden="true"
+                                                            ></i>
+                                                            Profile
+                                                        </a>
+                                                    </li>
+                                                    <li onClick={() => { localStorage.removeItem("user"); naigate("/login") }}>
+                                                        <a href="#">
+                                                            <i
+                                                                class="fa fa-sign-out"
+                                                                aria-hidden="true"
+                                                            ></i>
+                                                            Log out
+                                                        </a>
+                                                    </li>
+                                                    <li  onClick={() => { setClickProduct(undefined);setOpenHoaDon(true) }}>
+                                                        <a href="#">
+                                                            <i
+                                                                class="fa fa-sign-out"
+                                                                aria-hidden="true"
+                                                            ></i>
+                                                            Order
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>)}
                                     </div>
                                 </div>
                             </div>
@@ -194,7 +239,7 @@ function Home() {
                             <div class="row">
                                 <div class="col-lg-12 text-right">
                                     <div class="logo_container">
-                                        <a href="#">eStore</a>
+                                        <a href="/">eStore</a>
                                     </div>
                                     <nav class="navbar">
                                         <ul class="navbar_menu">
@@ -285,8 +330,7 @@ function Home() {
                         </div>
                     </div>
                 </section> */}
-
-                <div class="new_arrivals">
+                {clickProduct === undefined && openHoaDon===undefined ? (<div class="new_arrivals">
                     <div class="container">
                         <div class="row">
                             <div class="col text-center">
@@ -351,7 +395,9 @@ function Home() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>) : (<div style={{ marginTop: 100 }}>{clickProduct!== undefined ?(<ProductDetail product={clickProduct}></ProductDetail>):(<div style={{paddingTop:120,display:"flex",width:"100%",height:"100%",justifyContent:"center",alignItems:"center"}}><Order></Order></div>)}</div>)}
+
+          
             </div>
         </>
     );

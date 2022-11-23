@@ -1,10 +1,76 @@
-import React, { useState, useContext, useEffect } from "react";
+
+import { data } from "jquery";
+import React,{useContext, useEffect, useState} from "react";
+
 import "./bootstrap.css";
 import "./responsive.css";
 import "./ui.css";
 import { AppContext } from "../../context/AppProvider";
 
+import { AppContext } from "../../context/AppProvider";
+import axios from "axios";
 export default function Cart() {
+
+    const { setOpenThanhToan } =
+    useContext(AppContext);
+    const [sum,setSum] = useState(0)
+    const [orderDetals,setOrderDetals]=useState([])
+    data = [
+        {
+            name: "Nước hoa Gucci 105ml",
+            size: "105 ml",
+            quantity: 1,
+            price: 1000,
+            id:7
+            
+        },
+        {
+            name: "Nước hoa Chanel 200ml",
+            size: "200 ml",
+            quantity: 1,
+            price: 2000,
+            id:7
+        },
+        {
+            name: "Nước hoa Hermet 105ml",
+            size: "105 ml",
+            quantity: 2,
+            price: 3000,
+            id:11
+        }
+    ]
+    useEffect(()=>{
+        var sumTam =0
+        var orderTam =[]
+        data.forEach(element => {
+            const su = element.price
+            orderTam.push({
+                unitPrice:element.price,
+                quantity:element.quantity,
+                discount:0,
+                productId:element.id
+            })
+            sumTam+=su
+        });
+        setSum(sumTam)
+        setOrderDetals(orderTam)
+        
+    },[])
+    const hadleThanhToan = async()=>{
+        const response = await axios.post(
+            "http://localhost:5000/saveOrder",
+            {
+                orderDate:null,
+                address:"Thong nhat",
+                amount:1000,
+                description:"Test",
+                customerId:3,
+                orderDetails:orderDetals
+                
+            }
+        );
+    }
+
     // const product = JSON.parse(localStorage.getItem("cart"));
     const { product } = useContext(AppContext);
     const [productCart, setProductCart] = useState([]);
@@ -58,16 +124,22 @@ export default function Cart() {
                                         </tr>
                                     </thead>
                                     <tbody>
+
+
+
                                         {productCart.map((e, i) => {
+
                                             return (
                                                 <tr>
                                                     <td>
                                                         <figure class="itemside">
                                                             <div class="aside">
                                                                 <img
+
                                                                     src={
                                                                         e.image
                                                                     }
+
                                                                     class="img-sm"
                                                                 />
                                                             </div>
@@ -83,11 +155,16 @@ export default function Cart() {
                                                                     Color: blue,
                                                                     Brand:
                                                                     Tissot
+
                                                                 </p>
                                                             </figcaption>
                                                         </figure>
                                                     </td>
                                                     <td>
+
+
+
+
                                                         <select
                                                             id={
                                                                 e.productId +
@@ -182,11 +259,13 @@ export default function Cart() {
                                                 </tr>
                                             );
                                         })}
+
                                     </tbody>
                                 </table>
 
                                 <div class="card-body border-top">
-                                    <a
+                                    <a  
+                                        onClick={()=>{setOpenThanhToan(true)}}
                                         href="#"
                                         class="btn btn-primary float-md-right"
                                     >
@@ -231,28 +310,34 @@ export default function Cart() {
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-body">
+                                <div style={{display:"flex",flexDirection:"column"}} class="card-body">
                                     <dl class="dlist-align">
                                         <dt>Total price:</dt>
-                                        <dd class="text-right">{total} USD</dd>
+
+                                        <dd class="text-right">${sum}</dd>
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Discount:</dt>
-                                        <dd class="text-right">0 USD</dd>
+                                        <dd class="text-right">0</dd>
+
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Total:</dt>
                                         <dd class="text-right  h5">
-                                            <strong>{total}</strong>
+
+                                            <strong>${sum}</strong>
                                         </dd>
                                     </dl>
                                     <hr />
-                                    <p class="text-center mb-3">
-                                        <img
-                                            src={require("../images/misc/payments.png")}
-                                            height="26"
-                                        />
-                                    </p>
+                                    <a  
+                                        onClick={()=>{hadleThanhToan()}}
+                                        href="#"
+                                        class="btn btn-primary "
+                                    >
+                                        BUY
+                                       
+                                    </a>
+
                                 </div>
                             </div>
                         </aside>

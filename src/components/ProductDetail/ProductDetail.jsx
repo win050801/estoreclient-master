@@ -4,7 +4,7 @@ import "./bootstrap.css";
 import "./responsive.css";
 import "./ui.css";
 
-export default function ProductDetail() {
+export default function ProductDetail({product}) {
     return (
         <div className="App">
             <section class="section-content padding-y bg">
@@ -17,7 +17,7 @@ export default function ProductDetail() {
                                         <div class="card img-big-wrap">
                                             <a href="#">
                                                 <img
-                                                    src={require("../images/items/1.jpg")}
+                                                    src={product.image}
                                                 />
                                             </a>
                                         </div>
@@ -47,14 +47,14 @@ export default function ProductDetail() {
                                 </aside>
                                 <main class="col-md-6">
                                     <article>
-                                        <a
+                                        {/* <a
                                             href="#"
                                             class="text-primary btn-link"
                                         >
                                             Clothes
-                                        </a>
+                                        </a> */}
                                         <h3 class="title">
-                                            Great product name goes here
+                                            {product.name}
                                         </h3>
                                         <div>
                                             <ul class="rating-stars">
@@ -145,7 +145,7 @@ export default function ProductDetail() {
                                         </div>
 
                                         <div class="mb-3">
-                                            <var class="price h4">$230.00</var>
+                                            <var class="price h4">${product.unitPrice}</var>
                                             <br />
                                             <span class="monthly">
                                                 $32.00 / monthly
