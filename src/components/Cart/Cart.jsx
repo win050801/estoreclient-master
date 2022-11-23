@@ -5,12 +5,20 @@ import "./bootstrap.css";
 import "./responsive.css";
 import "./ui.css";
 import { AppContext } from "../../context/AppProvider";
-
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 export default function Cart() {
+    const navigate = useNavigate()
     const { setOpenThanhToan } = useContext(AppContext);
     const [sum, setSum] = useState(0);
     const [orderDetals, setOrderDetals] = useState([]);
+    const [user, setUser] = useState(undefined)
+    const { product } = useContext(AppContext);
+    const [productCart, setProductCart] = useState([]);
+    var [count, setCount] = useState(1);
+    var [total, setTotal] = useState(0);
+    var [tongTien, setTongTien] = useState(0);
+
     data = [
         {
             name: "Nước hoa Gucci 105ml",
@@ -35,46 +43,67 @@ export default function Cart() {
         },
     ];
     useEffect(() => {
-        var sumTam = 0;
-        var orderTam = [];
-        data.forEach((element) => {
-            const su = element.price;
-            orderTam.push({
-                unitPrice: element.price,
-                quantity: element.quantity,
-                discount: 0,
-                productId: element.id,
-            });
-            sumTam += su;
-        });
-        setSum(sumTam);
-        setOrderDetals(orderTam);
+        if (localStorage.getItem("user")) {
+            setUser(JSON.parse(localStorage.getItem("user")))
+        }
+
     }, []);
     const hadleThanhToan = async () => {
-        const response = await axios.post("http://localhost:5000/saveOrder", {
-            orderDate: null,
-            address: "Thong nhat",
-            amount: 1000,
-            description: "Test",
-            customerId: 3,
-            orderDetails: orderDetals,
-        });
+        if (user !== undefined) {
+            var sumTam = 0;
+            var orderTam = [];
+            const productCartTam = JSON.parse(localStorage.getItem("cart"))
+            productCartTam.forEach((element) => {
+                const su = element.price;
+                console.log(element);
+                orderTam.push({
+                    unitPrice: element.unitPrice,
+                    quantity: element.quantilyP,
+                    discount: 0,
+                    productId: element.productId,
+                });
+                sumTam += su;
+            });
+            console.log(orderTam);
+            try {
+                const response = await axios.post("http://localhost:5000/saveOrder", {
+                    orderDate: null,
+                    address: "Thong nhat",
+                    amount: 1000,
+                    description: "Test",
+                    customerId: user.customerId,
+                    orderDetails: orderTam,
+                });
+                localStorage.setItem(
+                    "cart",
+                    JSON.stringify(
+                        []
+                    )
+                );
+                navigate("/")
+            } catch (error) {
+                alert("fail")
+            }
+        }
+
     };
 
     // const product = JSON.parse(localStorage.getItem("cart"));
-    const { product } = useContext(AppContext);
-    const [productCart, setProductCart] = useState([]);
-    var [count, setCount] = useState(1);
-    var [total, setTotal] = useState(0);
-    var [tongTien, setTongTien] = useState(0);
+
     for (let i = 0; i < product.length; i++) {
         tongTien += parseInt(product[i].unitPrice) * product[i].quantilyP;
-        console.log(tongTien);
+        // console.log(tongTien);
     }
     const handleQuantily = (e) => {
         const countP = document.getElementById(e.productId + "fruit").value;
         e.quantilyP = parseInt(countP);
         setProductCart(JSON.parse(localStorage.getItem("cart")));
+        localStorage.setItem(
+            "cart",
+            JSON.stringify(
+                product
+            )
+        );
     };
     useEffect(() => {
         setProductCart(product);
@@ -142,6 +171,7 @@ export default function Cart() {
                                                     </td>
                                                     <td>
                                                         <select
+                                                            value={e.quantilyP}
                                                             id={
                                                                 e.productId +
                                                                 "fruit"
