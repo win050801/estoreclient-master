@@ -98,12 +98,16 @@ export default function Cart() {
         const countP = document.getElementById(e.productId + "fruit").value;
         e.quantilyP = parseInt(countP);
         setProductCart(JSON.parse(localStorage.getItem("cart")));
+
         localStorage.setItem(
             "cart",
             JSON.stringify(
                 product
             )
         );
+
+
+
     };
     useEffect(() => {
         setProductCart(product);
