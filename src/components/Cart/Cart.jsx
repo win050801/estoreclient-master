@@ -1,18 +1,31 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./bootstrap.css";
 import "./responsive.css";
 import "./ui.css";
+import { AppContext } from "../../context/AppProvider";
 
 export default function Cart() {
-    const product = JSON.parse(localStorage.getItem("cart"));
-    console.log(typeof product);
-    console.log(product[0]);
-    // const loop = (product) => {
-    //     for (let key in product) {
-    //         console.log(product[key].productId);
-    //     }
-    // };
-    // loop(product);
+    // const product = JSON.parse(localStorage.getItem("cart"));
+    const { product } = useContext(AppContext);
+    const [productCart, setProductCart] = useState([]);
+    var [count, setCount] = useState(1);
+    var [total, setTotal] = useState(0);
+
+    var sum = 0;
+
+    for (let i = 0; i < product.length; i++) {
+        sum += parseInt(product[i].unitPrice);
+        const countP = document.getElementById(product[i].productId + "fruit");
+        sum += parseInt(product[i].unitPrice) * countP;
+        // console.log(sum);
+    }
+    useEffect(() => {
+        setTotal(sum);
+    }, []);
+
+    useEffect(() => {
+        setProductCart(product);
+    }, [product]);
 
     return (
         <div className="App">
@@ -45,7 +58,7 @@ export default function Cart() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {product.map((e, i) => {
+                                        {productCart.map((e, i) => {
                                             return (
                                                 <tr>
                                                     <td>
@@ -75,10 +88,48 @@ export default function Cart() {
                                                         </figure>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control">
-                                                            <option>1</option>
-                                                            <option>2</option>
-                                                            <option>3</option>
+                                                        <select
+                                                            id={
+                                                                e.productId +
+                                                                "fruit"
+                                                            }
+                                                            class="form-control"
+                                                            onChange={() => {
+                                                                console.log(
+                                                                    e.productId
+                                                                );
+                                                                const countP =
+                                                                    document.getElementById(
+                                                                        e.productId +
+                                                                            "fruit"
+                                                                    ).value;
+                                                                const totalProduct =
+                                                                    countP *
+                                                                    e.unitPrice;
+                                                                console.log(
+                                                                    totalProduct
+                                                                );
+                                                                setTotal(
+                                                                    total +
+                                                                        parseInt(
+                                                                            countP *
+                                                                                e.unitPrice
+                                                                        )
+                                                                );
+                                                            }}
+                                                        >
+                                                            <option value="1">
+                                                                1
+                                                            </option>
+                                                            <option
+                                                                value="2"
+                                                                defaultValue
+                                                            >
+                                                                2
+                                                            </option>
+                                                            <option value="3">
+                                                                3
+                                                            </option>
                                                         </select>
                                                     </td>
                                                     <td>
@@ -105,18 +156,23 @@ export default function Cart() {
                                                             class="btn btn-light btn-round"
                                                             onClick={() => {
                                                                 // delete product.e;
-                                                                console.log(
-                                                                    product
-                                                                );
+
                                                                 product.splice(
                                                                     i,
                                                                     1
                                                                 );
+
                                                                 localStorage.setItem(
                                                                     "cart",
                                                                     JSON.stringify(
                                                                         product
                                                                     )
+                                                                );
+                                                                console.log(
+                                                                    product
+                                                                );
+                                                                setProductCart(
+                                                                    product
                                                                 );
                                                             }}
                                                         >
@@ -137,7 +193,7 @@ export default function Cart() {
                                         Make Purchase
                                         <i class="fa fa-chevron-right"></i>
                                     </a>
-                                    <a href="#" class="btn btn-light">
+                                    <a href="/" class="btn btn-light">
                                         <i class="fa fa-chevron-left"></i>
                                         Continue shopping
                                     </a>
@@ -178,22 +234,22 @@ export default function Cart() {
                                 <div class="card-body">
                                     <dl class="dlist-align">
                                         <dt>Total price:</dt>
-                                        <dd class="text-right">USD 568</dd>
+                                        <dd class="text-right">{total} USD</dd>
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Discount:</dt>
-                                        <dd class="text-right">USD 658</dd>
+                                        <dd class="text-right">0 USD</dd>
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Total:</dt>
                                         <dd class="text-right  h5">
-                                            <strong>$1,650</strong>
+                                            <strong>{total}</strong>
                                         </dd>
                                     </dl>
                                     <hr />
                                     <p class="text-center mb-3">
                                         <img
-                                            src="assets/images/misc/payments.png"
+                                            src={require("../images/misc/payments.png")}
                                             height="26"
                                         />
                                     </p>

@@ -9,7 +9,7 @@ import Col from "react-bootstrap/Col";
 import "bootstrap/dist/css/bootstrap.min.css";
 import FlatList from "flatlist-react";
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import "../styles/bootstrap4/bootstrap.min.css";
 import "../plugins/OwlCarousel2-2.2.1/owl.carousel.css";
@@ -17,11 +17,19 @@ import "../plugins/OwlCarousel2-2.2.1/owl.theme.default.css";
 import "../plugins/OwlCarousel2-2.2.1/animate.css";
 import "../styles/main_styles.css";
 import "../styles/responsive.css";
+import { AppContext } from "../context/AppProvider";
 import $ from "jquery";
 
 function Home() {
     const [data, setData] = useState();
     const [cartProduct, setCartProduct] = useState([]);
+    // const product = JSON.parse(localStorage.getItem("cart"));
+    const { product } = useContext(AppContext);
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        setCount(product.length);
+        console.log(count);
+    }, []);
 
     useEffect(() => {
         async function fetchData() {
@@ -100,12 +108,14 @@ function Home() {
                                 ) {
                                     cart.push(product);
                                     setCartProduct(cart);
+                                    setCount(count + 1);
+                                    console.log(count);
                                     localStorage.setItem(
                                         "cart",
                                         JSON.stringify(cart)
                                     );
                                 } else {
-                                    console.log("da co sp");
+                                    alert("Sản phẩm đã có trong giỏ hàng");
                                 }
                             } else {
                                 const cart = [];
@@ -113,12 +123,14 @@ function Home() {
                                 if (cart.indexOf(product) === -1) {
                                     cart.push(product);
                                     setCartProduct(cart);
+                                    setCount(count + 1);
+                                    console.log(count);
                                     localStorage.setItem(
                                         "cart",
                                         JSON.stringify(cart)
                                     );
                                 } else {
-                                    console.log("da co sp");
+                                    alert("Sản phẩm đã có trong giỏ hàng");
                                 }
                             }
                         }}
@@ -235,7 +247,7 @@ function Home() {
                                                             id="checkout_items"
                                                             class="checkout_items"
                                                         >
-                                                            2
+                                                            {count}
                                                         </span>
                                                     </a>
                                                 </div>
