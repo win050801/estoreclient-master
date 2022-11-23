@@ -14,7 +14,6 @@ export default function Order() {
         async function fetchData() {
             const response = await axios.post(
                 "http://localhost:5000/getOrder/3",
-
             );
             const dataTam = []
             response.data.forEach(element => {
@@ -91,7 +90,7 @@ export default function Order() {
                                         </figure>
                                     </td>
                                     <td>
-                                        <select class="form-control">
+                                        <select class="form-control" value={product.quantity}>
                                             <option>1</option>
                                             <option>2</option>
                                             <option>3</option>
