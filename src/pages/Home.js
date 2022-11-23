@@ -31,6 +31,18 @@ function Home() {
     const [clickProduct, setClickProduct] = useState(undefined);
     const [openHoaDon, setOpenHoaDon] = useState(undefined);
     const [data, setData] = useState();
+    const [classALl, setClassAll] = useState(
+        "grid_sorting_button button d-flex flex-column justify-content-center align-items-center active is-checked"
+    );
+    const [classGucci, setClassGucci] = useState(
+        "grid_sorting_button button d-flex flex-column justify-content-center align-items-center "
+    );
+    const [classChannel, setClassChannel] = useState(
+        "grid_sorting_button button d-flex flex-column justify-content-center align-items-center "
+    );
+    const [classVercase, setClassCVercase] = useState(
+        "grid_sorting_button button d-flex flex-column justify-content-center align-items-center "
+    );
 
     const [customer, setCustomer] = useState(undefined);
 
@@ -82,14 +94,15 @@ function Home() {
                         </div>
                         <div class="favorite favorite_left"></div>
                         <div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center">
-                            <span>-$20</span>
+                            <span>-${product.discount}</span>
                         </div>
                         <div class="product_info">
                             <h6 class="product_name">
                                 <a href="single.html">{product.name}</a>
                             </h6>
                             <div class="product_price">
-                                ${product.unitPrice * 0.8}
+                                $
+                                {parseInt(product.unitPrice - product.discount)}
                                 <span>${product.unitPrice}</span>
                             </div>
                         </div>
@@ -142,6 +155,7 @@ function Home() {
             </div>
         );
     };
+
     return (
         <>
             <div class="super_container">
@@ -373,28 +387,190 @@ function Home() {
                                         <div class="new_arrivals_sorting">
                                             <ul class="arrivals_grid_sorting clearfix button-group filters-button-group">
                                                 <li
-                                                    class="grid_sorting_button button d-flex flex-column justify-content-center align-items-center active is-checked"
+                                                    class={classALl}
                                                     data-filter="*"
+                                                    onClick={async () => {
+                                                        try {
+                                                            setClassAll(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center active is-checked"
+                                                            );
+                                                            setClassGucci(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                            );
+                                                            setClassCVercase(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                            );
+                                                            setClassChannel(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                            );
+                                                            const response =
+                                                                await axios.get(
+                                                                    "http://localhost:5000/getAllProduct"
+                                                                );
+                                                            setData(
+                                                                response.data
+                                                            );
+                                                            if (
+                                                                localStorage.getItem(
+                                                                    "user"
+                                                                )
+                                                            ) {
+                                                                setCustomer(
+                                                                    JSON.parse(
+                                                                        localStorage.getItem(
+                                                                            "user"
+                                                                        )
+                                                                    )
+                                                                );
+                                                            }
+
+                                                            // console.log(response);
+                                                        } catch (error) {
+                                                            console.log(error);
+                                                        }
+                                                    }}
                                                 >
                                                     all
                                                 </li>
                                                 <li
-                                                    class="grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                    class={classGucci}
                                                     data-filter=".women"
+                                                    onClick={async () => {
+                                                        try {
+                                                            setClassGucci(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center active is-checked"
+                                                            );
+                                                            setClassAll(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                            );
+                                                            setClassCVercase(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                            );
+                                                            setClassChannel(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                            );
+                                                            const response =
+                                                                await axios.get(
+                                                                    "http://localhost:5000/list-by-category/1"
+                                                                );
+                                                            setData(
+                                                                response.data
+                                                            );
+                                                            if (
+                                                                localStorage.getItem(
+                                                                    "user"
+                                                                )
+                                                            ) {
+                                                                setCustomer(
+                                                                    JSON.parse(
+                                                                        localStorage.getItem(
+                                                                            "user"
+                                                                        )
+                                                                    )
+                                                                );
+                                                            }
+
+                                                            // console.log(response);
+                                                        } catch (error) {
+                                                            console.log(error);
+                                                        }
+                                                    }}
                                                 >
-                                                    women's
+                                                    gucci
                                                 </li>
                                                 <li
-                                                    class="grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                    id="gucci"
+                                                    class={classChannel}
                                                     data-filter=".accessories"
+                                                    onClick={async () => {
+                                                        setClassChannel(
+                                                            "grid_sorting_button button d-flex flex-column justify-content-center align-items-center active is-checked"
+                                                        );
+                                                        setClassAll(
+                                                            "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                        );
+                                                        setClassCVercase(
+                                                            "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                        );
+                                                        setClassGucci(
+                                                            "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                        );
+
+                                                        try {
+                                                            const response =
+                                                                await axios.get(
+                                                                    "http://localhost:5000/list-by-category/2"
+                                                                );
+                                                            setData(
+                                                                response.data
+                                                            );
+                                                            if (
+                                                                localStorage.getItem(
+                                                                    "user"
+                                                                )
+                                                            ) {
+                                                                setCustomer(
+                                                                    JSON.parse(
+                                                                        localStorage.getItem(
+                                                                            "user"
+                                                                        )
+                                                                    )
+                                                                );
+                                                            }
+
+                                                            // console.log(response);
+                                                        } catch (error) {
+                                                            console.log(error);
+                                                        }
+                                                    }}
                                                 >
-                                                    accessories
+                                                    channel
                                                 </li>
                                                 <li
-                                                    class="grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                    class={classVercase}
                                                     data-filter=".men"
+                                                    onClick={async () => {
+                                                        try {
+                                                            setClassCVercase(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center active is-checked"
+                                                            );
+                                                            setClassGucci(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                            );
+                                                            setClassAll(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                            );
+                                                            setClassChannel(
+                                                                "grid_sorting_button button d-flex flex-column justify-content-center align-items-center"
+                                                            );
+                                                            const response =
+                                                                await axios.get(
+                                                                    "http://localhost:5000/list-by-category/3"
+                                                                );
+                                                            setData(
+                                                                response.data
+                                                            );
+                                                            if (
+                                                                localStorage.getItem(
+                                                                    "user"
+                                                                )
+                                                            ) {
+                                                                setCustomer(
+                                                                    JSON.parse(
+                                                                        localStorage.getItem(
+                                                                            "user"
+                                                                        )
+                                                                    )
+                                                                );
+                                                            }
+
+                                                            // console.log(response);
+                                                        } catch (error) {
+                                                            console.log(error);
+                                                        }
+                                                    }}
                                                 >
-                                                    men's
+                                                    vercase
                                                 </li>
                                             </ul>
                                         </div>
