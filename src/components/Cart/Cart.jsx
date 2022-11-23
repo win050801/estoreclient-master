@@ -7,7 +7,7 @@ import "./responsive.css";
 import "./ui.css";
 import { AppContext } from "../../context/AppProvider";
 
-import { AppContext } from "../../context/AppProvider";
+
 import axios from "axios";
 export default function Cart() {
 
@@ -77,21 +77,22 @@ export default function Cart() {
     var [count, setCount] = useState(1);
     var [total, setTotal] = useState(0);
 
-    var sum = 0;
+   
 
     for (let i = 0; i < product.length; i++) {
-        sum += parseInt(product[i].unitPrice);
-        const countP = document.getElementById(product[i].productId + "fruit");
-        sum += parseInt(product[i].unitPrice) * countP;
-        // console.log(sum);
+        // sum += parseInt(product[i].unitPrice);
+        // const countP = document.getElementById(product[i].productId + "fruit").value;
+        // sum += parseInt(product[i].unitPrice) * countP;
+        // console.log(countP);
     }
-    useEffect(() => {
-        setTotal(sum);
-    }, []);
+    // useEffect(() => {
+    //     setTotal(sum);
+    // }, []);
 
     useEffect(() => {
+        console.log(product);
         setProductCart(product);
-    }, [product]);
+    }, [productCart]);
 
     return (
         <div className="App">
@@ -183,8 +184,9 @@ export default function Cart() {
                                                                 const totalProduct =
                                                                     countP *
                                                                     e.unitPrice;
+                                                               
                                                                 console.log(
-                                                                    totalProduct
+                                                                    countP
                                                                 );
                                                                 setTotal(
                                                                     total +
@@ -245,11 +247,13 @@ export default function Cart() {
                                                                         product
                                                                     )
                                                                 );
-                                                                console.log(
-                                                                    product
-                                                                );
+                                                                // console.log(
+                                                                //     typeof
+                                                                //     product
+                                                                // );
+                                                                // console.log(JSON.parse(localStorage.getItem("cart")));
                                                                 setProductCart(
-                                                                    product
+                                                                   JSON.parse(localStorage.getItem("cart"))
                                                                 );
                                                             }}
                                                         >
