@@ -1,12 +1,16 @@
+
 import { data } from "jquery";
 import React,{useContext, useEffect, useState} from "react";
+
 import "./bootstrap.css";
 import "./responsive.css";
 import "./ui.css";
+import { AppContext } from "../../context/AppProvider";
 
 import { AppContext } from "../../context/AppProvider";
 import axios from "axios";
 export default function Cart() {
+
     const { setOpenThanhToan } =
     useContext(AppContext);
     const [sum,setSum] = useState(0)
@@ -66,6 +70,29 @@ export default function Cart() {
             }
         );
     }
+
+    // const product = JSON.parse(localStorage.getItem("cart"));
+    const { product } = useContext(AppContext);
+    const [productCart, setProductCart] = useState([]);
+    var [count, setCount] = useState(1);
+    var [total, setTotal] = useState(0);
+
+    var sum = 0;
+
+    for (let i = 0; i < product.length; i++) {
+        sum += parseInt(product[i].unitPrice);
+        const countP = document.getElementById(product[i].productId + "fruit");
+        sum += parseInt(product[i].unitPrice) * countP;
+        // console.log(sum);
+    }
+    useEffect(() => {
+        setTotal(sum);
+    }, []);
+
+    useEffect(() => {
+        setProductCart(product);
+    }, [product]);
+
     return (
         <div className="App">
             <section class="section-pagetop bg">
@@ -97,14 +124,22 @@ export default function Cart() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {data.map((product, index) => {
+
+
+
+                                        {productCart.map((e, i) => {
+
                                             return (
                                                 <tr>
                                                     <td>
                                                         <figure class="itemside">
                                                             <div class="aside">
                                                                 <img
-                                                                    src="assets/images/items/1.jpg"
+
+                                                                    src={
+                                                                        e.image
+                                                                    }
+
                                                                     class="img-sm"
                                                                 />
                                                             </div>
@@ -113,30 +148,74 @@ export default function Cart() {
                                                                     href="#"
                                                                     class="title text-dark"
                                                                 >
-                                                                    {product.name}
+                                                                    {e.name}
                                                                 </a>
-                                                                <p class="text-muted small">
-                                                                    Size: {product.size},  <br /> Brand:
-                                                                    Gucci
+                                                                <p class="small text-muted">
+                                                                    Size: XL,
+                                                                    Color: blue,
+                                                                    Brand:
+                                                                    Tissot
+
                                                                 </p>
                                                             </figcaption>
                                                         </figure>
                                                     </td>
                                                     <td>
-                                                        <select class="form-control">
-                                                            <option>1</option>
-                                                            <option>2</option>
-                                                            <option>3</option>
-                                                            <option>4</option>
+
+
+
+
+                                                        <select
+                                                            id={
+                                                                e.productId +
+                                                                "fruit"
+                                                            }
+                                                            class="form-control"
+                                                            onChange={() => {
+                                                                console.log(
+                                                                    e.productId
+                                                                );
+                                                                const countP =
+                                                                    document.getElementById(
+                                                                        e.productId +
+                                                                            "fruit"
+                                                                    ).value;
+                                                                const totalProduct =
+                                                                    countP *
+                                                                    e.unitPrice;
+                                                                console.log(
+                                                                    totalProduct
+                                                                );
+                                                                setTotal(
+                                                                    total +
+                                                                        parseInt(
+                                                                            countP *
+                                                                                e.unitPrice
+                                                                        )
+                                                                );
+                                                            }}
+                                                        >
+                                                            <option value="1">
+                                                                1
+                                                            </option>
+                                                            <option
+                                                                value="2"
+                                                                defaultValue
+                                                            >
+                                                                2
+                                                            </option>
+                                                            <option value="3">
+                                                                3
+                                                            </option>
                                                         </select>
                                                     </td>
                                                     <td>
                                                         <div class="price-wrap">
                                                             <var class="price">
-                                                                ${product.price}
+                                                                {e.unitPrice}
                                                             </var>
                                                             <small class="text-muted">
-                                                                ${product.price}
+                                                                $578.00 each
                                                             </small>
                                                         </div>
                                                     </td>
@@ -151,17 +230,35 @@ export default function Cart() {
                                                             <i class="fa fa-heart"></i>
                                                         </a>
                                                         <a
-                                                            href=""
-                                                            class="btn btn-light"
+                                                            class="btn btn-light btn-round"
+                                                            onClick={() => {
+                                                                // delete product.e;
+
+                                                                product.splice(
+                                                                    i,
+                                                                    1
+                                                                );
+
+                                                                localStorage.setItem(
+                                                                    "cart",
+                                                                    JSON.stringify(
+                                                                        product
+                                                                    )
+                                                                );
+                                                                console.log(
+                                                                    product
+                                                                );
+                                                                setProductCart(
+                                                                    product
+                                                                );
+                                                            }}
                                                         >
                                                             Remove
                                                         </a>
                                                     </td>
                                                 </tr>
-                                            )
-
+                                            );
                                         })}
-
 
                                     </tbody>
                                 </table>
@@ -175,7 +272,7 @@ export default function Cart() {
                                         Make Purchase
                                         <i class="fa fa-chevron-right"></i>
                                     </a>
-                                    <a href="#" class="btn btn-light">
+                                    <a href="/" class="btn btn-light">
                                         <i class="fa fa-chevron-left"></i>
                                         Continue shopping
                                     </a>
@@ -216,15 +313,18 @@ export default function Cart() {
                                 <div style={{display:"flex",flexDirection:"column"}} class="card-body">
                                     <dl class="dlist-align">
                                         <dt>Total price:</dt>
+
                                         <dd class="text-right">${sum}</dd>
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Discount:</dt>
                                         <dd class="text-right">0</dd>
+
                                     </dl>
                                     <dl class="dlist-align">
                                         <dt>Total:</dt>
                                         <dd class="text-right  h5">
+
                                             <strong>${sum}</strong>
                                         </dd>
                                     </dl>
@@ -237,6 +337,7 @@ export default function Cart() {
                                         BUY
                                        
                                     </a>
+
                                 </div>
                             </div>
                         </aside>

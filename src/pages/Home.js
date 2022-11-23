@@ -10,13 +10,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import FlatList from "flatlist-react";
 import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
+
 import { UserOutlined } from "@ant-design/icons";
+
 import "../styles/bootstrap4/bootstrap.min.css";
 import "../plugins/OwlCarousel2-2.2.1/owl.carousel.css";
 import "../plugins/OwlCarousel2-2.2.1/owl.theme.default.css";
 import "../plugins/OwlCarousel2-2.2.1/animate.css";
 import "../styles/main_styles.css";
 import "../styles/responsive.css";
+import { AppContext } from "../context/AppProvider";
 import $ from "jquery";
 import { useNavigate } from "react-router-dom";
 import ProductDetail from "../components/ProductDetail/ProductDetail";
@@ -29,19 +32,21 @@ function Home() {
     const [clickProduct, setClickProduct] = useState(undefined)
     const[openHoaDon,setOpenHoaDon] =useState(undefined)
     const [data, setData] = useState();
+
     const [customer, setCustomer] = useState(undefined)
 
-    const handleAddCart = async (productId) => {
-        try {
-            const response = await axios.get(
-                `http://localhost:5000/addToCart/${productId}`
-            );
-            setData(response.data);
-            console.log(response);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+   
+
+    const [cartProduct, setCartProduct] = useState([]);
+    // const product = JSON.parse(localStorage.getItem("cart"));
+    const { product } = useContext(AppContext);
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        setCount(product.length);
+        console.log(count);
+    }, []);
+
+   
     useEffect(() => {
         async function fetchData() {
             // You can await here
@@ -95,45 +100,47 @@ function Home() {
                     <div
                         class="red_button add_to_cart_button btn-add-cart"
                         onClick={async () => {
-                            var productId = product.productId;
-                            try {
-                                const response = await axios.post(
-                                    `http://localhost:5000/createCookie`
+                            if (localStorage.getItem("cart")) {
+                                const cart = JSON.parse(
+                                    localStorage.getItem("cart")
                                 );
-                                console.log(response);
-                            } catch (error) {
-                                console.log(error);
+
+                                if (
+                                    JSON.stringify(cart).indexOf(
+                                        JSON.stringify(product)
+                                    ) === -1
+                                ) {
+                                    cart.push(product);
+                                    setCartProduct(cart);
+                                    setCount(count + 1);
+                                    console.log(count);
+                                    localStorage.setItem(
+                                        "cart",
+                                        JSON.stringify(cart)
+                                    );
+                                } else {
+                                    alert("Sản phẩm đã có trong giỏ hàng");
+                                }
+                            } else {
+                                const cart = [];
+                                console.log(cart);
+                                if (cart.indexOf(product) === -1) {
+                                    cart.push(product);
+                                    setCartProduct(cart);
+                                    setCount(count + 1);
+                                    console.log(count);
+                                    localStorage.setItem(
+                                        "cart",
+                                        JSON.stringify(cart)
+                                    );
+                                } else {
+                                    alert("Sản phẩm đã có trong giỏ hàng");
+                                }
                             }
                         }}
-                    // onClick={handleAddCart(product.productId)}
-                    // onClick={() => {
-                    // handleAddCart(productId);
-                    // $(document).ready(function () {
-                    //     $(".btn-add-cart").click(function () {
-                    //         var productId = product.productId;
-                    //         try {
-                    //             const response = axios.get(
-                    //                 `http://localhost:5000/addToCart/${productId}`
-                    //             );
-                    //         } catch (error) {
-                    //             console.log(error);
-                    //         }
-                    //         // $.ajax({
-                    //         //     // url: `http://localhost:5000/addToCart/${productId}`,
-                    //         //     url: "http://localhost:5000/addToCart/1112",
-                    //         //     success: function (response) {
-                    //         //         if (response) {
-                    //         //             console.log("Thêm thành công");
-                    //         //         } else {
-                    //         //             console.log("Đã có sẵn");
-                    //         //         }
-                    //         //     },
-                    //         // });
-                    //     });
-                    // });
-                    // }}
+
                     >
-                        <a href="#">add to cart</a>
+                        <a>add to cart</a>
                     </div>
                 </div>
             </div>
@@ -285,7 +292,7 @@ function Home() {
                                                             id="checkout_items"
                                                             class="checkout_items"
                                                         >
-                                                            2
+                                                            {count}
                                                         </span>
                                                     </a>
                                                 </div>
