@@ -51,8 +51,8 @@ function Home() {
     const { product } = useContext(AppContext);
     const [count, setCount] = useState(0);
     useEffect(() => {
-        setCount(product.length);
-        console.log(count);
+        // setCount(product.length);
+        // console.log(count);
     }, []);
 
     useEffect(() => {

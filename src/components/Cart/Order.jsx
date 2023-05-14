@@ -9,35 +9,57 @@ import axios from "axios";
 import { getValue } from "@testing-library/user-event/dist/utils";
 export default function Order() {
     const [data, setData] = useState([])
-    const[test,settest] = useState()
+    const [test, settest] = useState()
+    const getproduct = async (id)=>{
+        try {
+            const pr = axios.get(
+                `http://localhost:5000/product/`+id
+            );
+        return pr 
+        } catch (error) {
+            console.log(error);
+        }
+    }
     useEffect(() => {
         async function fetchData() {
-            const response = await axios.post(
-                "http://localhost:5000/getOrder/3",
-            );
-            const dataTam = []
-            response.data.forEach(element => {
-                element.orderDetails.forEach(e => {
-                    const pr = axios.get(
-                        `http://localhost:5000/product/${e.productId}`
-                    );
-                    var a;
-                    pr.then( function  (result) {
-                         e.name = result.data.name
-                        e.image = result.data.image
-                        
-                    })  
-                   
-                    dataTam.push(e)
+            if (localStorage.getItem("user")) {
+                const response = await axios.post(
+                    "http://localhost:5000/getOrder/"+(JSON.parse(localStorage.getItem("user")).customerId),
+                );
+                const dataTam = []
+                const allProduct = await axios.get(
+                    `http://localhost:5000/getAllProduct`
+                );
+                console.log(allProduct);
+                response.data.forEach(element => {
+                    element.orderDetails.forEach(e => {
+                        // const pr = axios.get(
+                        //     `http://localhost:5000/product/${e.productId}`
+                        // );
+                        // var a;
+                        // pr.then(function (result) {
+                        //     e.name = result.data.name
+                        //     e.image = result.data.image  
+                        // })
+                        allProduct.data.forEach(element => {
+                            if(element.productId===e.productId)
+                            {
+                                e.name = element.name
+                                e.image = element.image
+                            }
+                        });
+                        dataTam.push(e)
+                    });
+
                 });
 
-            });
-            
-          
-            
-            setData(dataTam)
-            
 
+
+                setData(dataTam)
+
+
+
+            }
         }
         fetchData();
     }, [])
@@ -80,7 +102,7 @@ export default function Order() {
                                                     href="#"
                                                     class="title text-dark"
                                                 >
-                                                   {product.name}
+                                                    {product.name}
                                                 </a>
                                                 <p class="text-muted small">
                                                     Size:XL,  <br /> Brand:
