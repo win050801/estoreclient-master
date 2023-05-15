@@ -81,14 +81,14 @@ function Home() {
     const renderPerson = (product, idx) => {
         return (
             <div
-                onClick={() => {
-                    setClickProduct(product);
-                }}
+
                 class="product-grid"
                 data-isotope='{ "itemSelector": ".product-item", "layoutMode": "fitRows" }'
             >
-                <div class="product-item men">
-                    <div class="product discount product_filter">
+                <div class="product-item men" >
+                    <div class="product discount product_filter" onClick={() => {
+                        setClickProduct(product);
+                    }}>
                         <div class="product_image">
                             <img src={product.image} alt="" />
                         </div>
@@ -499,7 +499,7 @@ function Home() {
                                                         try {
                                                             const response =
                                                                 await axios.get(
-                                                                    "http://localhost:5000/list-by-category/2"
+                                                                    "http://localhost:5000/list-by-category/3"
                                                                 );
                                                             setData(
                                                                 response.data
@@ -545,7 +545,7 @@ function Home() {
                                                             );
                                                             const response =
                                                                 await axios.get(
-                                                                    "http://localhost:5000/list-by-category/3"
+                                                                    "http://localhost:5000/list-by-category/2"
                                                                 );
                                                             setData(
                                                                 response.data

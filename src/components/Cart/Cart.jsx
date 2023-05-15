@@ -68,7 +68,7 @@ export default function Cart() {
             try {
                 const response = await axios.post("http://localhost:5000/saveOrder", {
                     orderDate: null,
-                    address: "Thong nhat",
+                    address: user.adress,
                     amount: 1000,
                     description: "Test",
                     customerId: user.customerId,
@@ -85,14 +85,20 @@ export default function Cart() {
                 alert("fail")
             }
         }
+        else{
+            navigate("/login")
+        }
 
     };
 
     // const product = JSON.parse(localStorage.getItem("cart"));
 
-    for (let i = 0; i < product.length; i++) {
-        tongTien += parseInt(product[i].unitPrice) * product[i].quantilyP;
-        // console.log(tongTien);
+    if(product)
+    {
+        for (let i = 0; i < product.length; i++) {
+            tongTien += parseInt(product[i].unitPrice) * product[i].quantilyP;
+            // console.log(tongTien);
+        }
     }
     const handleQuantily = (e) => {
         const countP = document.getElementById(e.productId + "fruit").value;
