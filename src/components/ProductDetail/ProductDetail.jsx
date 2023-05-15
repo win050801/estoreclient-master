@@ -5,6 +5,7 @@ import "./responsive.css";
 import "./ui.css";
 
 export default function ProductDetail({product}) {
+    
     return (
         <div className="App">
             <section class="section-content padding-y bg">
@@ -21,7 +22,7 @@ export default function ProductDetail({product}) {
                                                 />
                                             </a>
                                         </div>
-                                        <div class="thumbs-wrap">
+                                        {/* <div class="thumbs-wrap">
                                             <a href="#" class="item-thumb">
                                                 <img
                                                     src={require("../images/items/2.jpg")}
@@ -42,7 +43,7 @@ export default function ProductDetail({product}) {
                                                     src={require("../images/items/1.jpg")}
                                                 />
                                             </a>
-                                        </div>
+                                        </div> */}
                                     </article>
                                 </aside>
                                 <main class="col-md-6">
